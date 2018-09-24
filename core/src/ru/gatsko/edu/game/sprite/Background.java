@@ -1,4 +1,4 @@
-package ru.gatsko.edu.game.base;
+package ru.gatsko.edu.game.sprite;
 
 /**
  * Created by gatsko on 21.09.2018.

@@ -125,7 +125,12 @@ public class Base2DScreen implements Screen, InputProcessor{
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         System.out.println("touchUp " + screenX + ' ' + screenY + ' ' + pointer + ' ' + button);
         touch.set(screenX, screenBounds.getHeight() - screenY).mul(screenToWorld);
-        touchDown(touch, pointer);
+        touchUp(touch, pointer);
+        return false;
+    }
+
+    public boolean touchUp(Vector2 touch, int pointer) {
+        System.out.println("touch " + touch.x + ' ' + touch.y + ' ' + pointer);
         return false;
     }
 

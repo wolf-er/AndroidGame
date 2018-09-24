@@ -10,51 +10,50 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.gatsko.edu.game.base.ActionListener;
+import ru.gatsko.edu.game.base.Base2DScreen;
 import ru.gatsko.edu.game.math.Rect;
 import ru.gatsko.edu.game.sprite.Background;
-import ru.gatsko.edu.game.base.Base2DScreen;
 import ru.gatsko.edu.game.sprite.ButtonExit;
 import ru.gatsko.edu.game.sprite.ButtonPlay;
+import ru.gatsko.edu.game.sprite.Ship;
 import ru.gatsko.edu.game.sprite.Star;
 
 /**
- * Created by gatsko on 17.09.2018.
+ * Created by gatsko on 23.09.2018.
  */
 
-public class MenuScreen extends Base2DScreen implements ActionListener{
+public class GameScreen extends Base2DScreen implements ActionListener {
     private static final int STARS_COUNT = 100;
     Background background;
-    ButtonExit buttonExit;
-    ButtonPlay buttonPlay;
     TextureAtlas atlas;
     Texture bg;
+    Vector2 speed;
     Star stars[];
+    Ship ship;
 
-    public MenuScreen(Game game) {
-        super(game);
-    }
+
+    public GameScreen(Game game) { super(game); }
 
     @Override
     public void show() {
         super.show();
         batch = new SpriteBatch();
         batch.getProjectionMatrix().idt();
-        atlas = new TextureAtlas("menuAtlas.tpack");
+        atlas = new TextureAtlas("mainAtlas.tpack");
         bg = new Texture("background.jpg");
         background = new Background(new TextureRegion(bg));
-        buttonExit = new ButtonExit(atlas, this);
-        buttonPlay = new ButtonPlay(atlas, this);
+        ship = new Ship(atlas);
         stars = new Star[STARS_COUNT];
         for (int i = 0; i < STARS_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
     }
 
+
     @Override
     protected void resize(Rect worldBounds) {
         background.resize(worldBounds);
-        buttonExit.resize(worldBounds);
-        buttonPlay.resize(worldBounds);
+        ship.resize(worldBounds);
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].resize(worldBounds); }
     }
 
@@ -62,7 +61,13 @@ public class MenuScreen extends Base2DScreen implements ActionListener{
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        checkCollisions();
+        deleteAllDestroyed();
         draw();
+    }
+    public void checkCollisions(){
+    }
+    public void deleteAllDestroyed(){
     }
 
     public void draw(){
@@ -71,28 +76,40 @@ public class MenuScreen extends Base2DScreen implements ActionListener{
         batch.begin();
         background.draw(batch);
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].draw(batch); }
-        buttonExit.draw(batch);
-        buttonPlay.draw(batch);
-
+        ship.draw(batch);
         batch.end();
     }
 
     public void update(float delta){
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].update(delta); }
+        ship.update(delta);
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        buttonExit.touchDown(touch,pointer);
-        buttonPlay.touchDown(touch, pointer);
+        ship.touchDown(touch, pointer);
         return super.touchDown(touch, pointer);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        buttonExit.touchUp(touch,pointer);
-        buttonPlay.touchUp(touch,pointer);
         return super.touchUp(touch, pointer);
+    }
+
+    @Override
+    public void actionPerformed(Object src) {
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        ship.keyDown(keycode);
+        return super.keyDown(keycode);
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        ship.keyUp(keycode);
+        return super.keyUp(keycode);
     }
 
     @Override
@@ -100,14 +117,5 @@ public class MenuScreen extends Base2DScreen implements ActionListener{
         bg.dispose();
         atlas.dispose();
         super.dispose();
-    }
-
-    @Override
-    public void actionPerformed(Object src) {
-        if (src == buttonExit) {
-            Gdx.app.exit();
-        } else if (src == buttonPlay) {
-            game.setScreen(new GameScreen(game));
-        }
     }
 }
