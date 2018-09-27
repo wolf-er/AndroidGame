@@ -12,10 +12,9 @@ import com.badlogic.gdx.math.Vector2;
 import ru.gatsko.edu.game.base.ActionListener;
 import ru.gatsko.edu.game.base.Base2DScreen;
 import ru.gatsko.edu.game.math.Rect;
+import ru.gatsko.edu.game.pool.BulletPool;
 import ru.gatsko.edu.game.sprite.Background;
-import ru.gatsko.edu.game.sprite.ButtonExit;
-import ru.gatsko.edu.game.sprite.ButtonPlay;
-import ru.gatsko.edu.game.sprite.Ship;
+import ru.gatsko.edu.game.sprite.MainShip;
 import ru.gatsko.edu.game.sprite.Star;
 
 /**
@@ -24,13 +23,13 @@ import ru.gatsko.edu.game.sprite.Star;
 
 public class GameScreen extends Base2DScreen implements ActionListener {
     private static final int STARS_COUNT = 100;
+    BulletPool bulletPool;
     Background background;
     TextureAtlas atlas;
     Texture bg;
     Vector2 speed;
     Star stars[];
-    Ship ship;
-
+    MainShip ship;
 
     public GameScreen(Game game) { super(game); }
 
@@ -42,7 +41,8 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         atlas = new TextureAtlas("mainAtlas.tpack");
         bg = new Texture("background.jpg");
         background = new Background(new TextureRegion(bg));
-        ship = new Ship(atlas);
+        bulletPool = new BulletPool();
+        ship = new MainShip(atlas, bulletPool);
         stars = new Star[STARS_COUNT];
         for (int i = 0; i < STARS_COUNT; i++) {
             stars[i] = new Star(atlas);
@@ -52,6 +52,7 @@ public class GameScreen extends Base2DScreen implements ActionListener {
 
     @Override
     protected void resize(Rect worldBounds) {
+        super.resize(worldBounds);
         background.resize(worldBounds);
         ship.resize(worldBounds);
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].resize(worldBounds); }
@@ -68,6 +69,7 @@ public class GameScreen extends Base2DScreen implements ActionListener {
     public void checkCollisions(){
     }
     public void deleteAllDestroyed(){
+        bulletPool.freeAllDestroyedActiveObjects();
     }
 
     public void draw(){
@@ -77,12 +79,14 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         background.draw(batch);
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].draw(batch); }
         ship.draw(batch);
+        bulletPool.drawActiveObjects(batch);
         batch.end();
     }
 
     public void update(float delta){
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].update(delta); }
         ship.update(delta);
+        bulletPool.updateActiveObjects(delta);
     }
 
     @Override
@@ -92,7 +96,14 @@ public class GameScreen extends Base2DScreen implements ActionListener {
     }
 
     @Override
+    public boolean touchDragged(Vector2 touch, int pointer) {
+        ship.touchDragged(touch, pointer);
+        return super.touchDragged(touch, pointer);
+    }
+
+    @Override
     public boolean touchUp(Vector2 touch, int pointer) {
+        ship.touchUp(touch, pointer);
         return super.touchUp(touch, pointer);
     }
 
@@ -116,6 +127,7 @@ public class GameScreen extends Base2DScreen implements ActionListener {
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        bulletPool.dispose();
         super.dispose();
     }
 }
