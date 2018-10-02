@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.HashMap;
 
-import ru.gatsko.edu.game.base.Sprite;
+import ru.gatsko.edu.game.base.Ship;
 import ru.gatsko.edu.game.math.Rect;
 import ru.gatsko.edu.game.pool.BulletPool;
 
@@ -18,27 +18,28 @@ import ru.gatsko.edu.game.pool.BulletPool;
  * Created by gatsko on 23.09.2018.
  */
 
-public class MainShip extends Sprite {
-    private Vector2 speed = new Vector2(), bulletSpeed = new Vector2(0,0.5f);
-    private Rect worldBounds;
-    private BulletPool bulletPool;
-    private TextureRegion bulletRegion;
-    private Sound shootSound;
+public class MainShip extends Ship {
     private Boolean leftPressed = false, rightPressed = false, downPressed = false, upPressed = false;
     private int touchRight;
     private HashMap<Integer, Vector2> currTouch = new HashMap<Integer, Vector2>();
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
-        super(atlas.findRegion("main_ship"), 1,2, 2);
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, Sound shootSound) {
+        super(atlas.findRegion("main_ship"), 1,2, 2, bulletPool, shootSound);
         this.bulletRegion = atlas.findRegion("bulletMainShip");
+        this.bulletHeight = 0.02f;
+        this.bulletDamage = 1;
+        this.bulletSpeed.set(0,0.5f);
+        this.reloadInterval = 10.2f;
         setHeightProportion(0.2f);
-        this.bulletPool = bulletPool;
-        shootSound = Gdx.audio.newSound(Gdx.files.internal("blaster.mp3"));
-        speed.setZero();
     }
 
     @Override
     public void update(float delta) {
+            reloadTimer += delta;
+            if (reloadTimer >= reloadInterval) {
+                reloadTimer = 0f;
+                shoot();
+            }
             speed.setZero();
             if (leftPressed) {
                 speed.x -= 1;
@@ -70,7 +71,7 @@ public class MainShip extends Sprite {
 
     @Override
     public void resize(Rect worldBounds) {
-        this.worldBounds = worldBounds;
+        super.resize(worldBounds);
         setBottom(worldBounds.getBottom() + (worldBounds.getTop() - worldBounds.getBottom()) * 0.02f);
         setRight(worldBounds.getLeft() + (worldBounds.getRight() - worldBounds.getLeft()) / 2 + this.getHalfWidth());
     }
@@ -168,9 +169,4 @@ public class MainShip extends Sprite {
         currTouch.get(pointer).y = touch.y;
     }
 
-    public void shoot(){
-        shootSound.play(0.5f);
-        Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletSpeed, 0.03f, worldBounds, 1);
-    }
 }

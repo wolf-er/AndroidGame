@@ -2,6 +2,9 @@ package ru.gatsko.edu.game.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,9 +16,13 @@ import ru.gatsko.edu.game.base.ActionListener;
 import ru.gatsko.edu.game.base.Base2DScreen;
 import ru.gatsko.edu.game.math.Rect;
 import ru.gatsko.edu.game.pool.BulletPool;
+import ru.gatsko.edu.game.pool.EnemyPool;
+import ru.gatsko.edu.game.pool.ExplosionPool;
 import ru.gatsko.edu.game.sprite.Background;
+import ru.gatsko.edu.game.sprite.Explosion;
 import ru.gatsko.edu.game.sprite.MainShip;
 import ru.gatsko.edu.game.sprite.Star;
+import ru.gatsko.edu.game.utils.EnemiesEmitter;
 
 /**
  * Created by gatsko on 23.09.2018.
@@ -25,12 +32,15 @@ public class GameScreen extends Base2DScreen implements ActionListener {
     private static final int STARS_COUNT = 100;
     BulletPool bulletPool;
     Background background;
+    Music music;
+    Sound shootSound, enemySound, boomSound;
     TextureAtlas atlas;
     Texture bg;
-    Vector2 speed;
     Star stars[];
     MainShip ship;
-
+    EnemyPool enemyPool;
+    ExplosionPool explosionPool;
+    EnemiesEmitter enemiesEmitter;
     public GameScreen(Game game) { super(game); }
 
     @Override
@@ -42,11 +52,23 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         bg = new Texture("background.jpg");
         background = new Background(new TextureRegion(bg));
         bulletPool = new BulletPool();
-        ship = new MainShip(atlas, bulletPool);
+        shootSound = Gdx.audio.newSound(Gdx.files.internal("laser.wav"));
+        enemySound = Gdx.audio.newSound(Gdx.files.internal("bullet.wav"));
+        boomSound = Gdx.audio.newSound(Gdx.files.internal("explosion.wav"));
+        ship = new MainShip(atlas, bulletPool, shootSound);
+        explosionPool = new ExplosionPool(atlas, boomSound);
+        enemyPool = new EnemyPool(bulletPool, explosionPool, enemySound, ship);
+
+        enemiesEmitter = new EnemiesEmitter(enemyPool, atlas, worldBounds);
         stars = new Star[STARS_COUNT];
         for (int i = 0; i < STARS_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
+        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        music.setLooping(true);
+        music.setVolume(0.5f);
+        //music.play();
+        music.setPosition(34f);
     }
 
 
@@ -55,6 +77,7 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         super.resize(worldBounds);
         background.resize(worldBounds);
         ship.resize(worldBounds);
+        enemyPool.resize(worldBounds);
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].resize(worldBounds); }
     }
 
@@ -70,6 +93,8 @@ public class GameScreen extends Base2DScreen implements ActionListener {
     }
     public void deleteAllDestroyed(){
         bulletPool.freeAllDestroyedActiveObjects();
+        enemyPool.freeAllDestroyedActiveObjects();
+        explosionPool.freeAllDestroyedActiveObjects();
     }
 
     public void draw(){
@@ -80,6 +105,8 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].draw(batch); }
         ship.draw(batch);
         bulletPool.drawActiveObjects(batch);
+        enemyPool.drawActiveObjects(batch);
+        explosionPool.drawActiveObjects(batch);
         batch.end();
     }
 
@@ -87,6 +114,9 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].update(delta); }
         ship.update(delta);
         bulletPool.updateActiveObjects(delta);
+        enemyPool.updateActiveObjects(delta);
+        explosionPool.updateActiveObjects(delta);
+        enemiesEmitter.generateEnemies(delta);
     }
 
     @Override
@@ -114,6 +144,12 @@ public class GameScreen extends Base2DScreen implements ActionListener {
     @Override
     public boolean keyDown(int keycode) {
         ship.keyDown(keycode);
+        switch (keycode) {
+            case Input.Keys.R:
+                Explosion exp = explosionPool.obtain();
+                exp.set(0.15f, worldBounds.pos);
+                break;
+        }
         return super.keyDown(keycode);
     }
 
@@ -128,6 +164,8 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         bg.dispose();
         atlas.dispose();
         bulletPool.dispose();
+        explosionPool.dispose();
+        enemyPool.dispose();
         super.dispose();
     }
 }
