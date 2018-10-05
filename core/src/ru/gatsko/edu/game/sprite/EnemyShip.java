@@ -15,7 +15,7 @@ import ru.gatsko.edu.game.pool.ExplosionPool;
 
 public class EnemyShip extends Ship {
     private MainShip mainShip;
-    private final Vector2 incommingSpeed = new Vector2(0,-0.4f);
+    private final Vector2 incommingSpeed = new Vector2(0,-0.3f);
     private Vector2 baseSpeed = new Vector2();
     private float height;
 
@@ -39,8 +39,6 @@ public class EnemyShip extends Ship {
             pos.mulAdd(incommingSpeed, delta);
         }
         if (getBottom() <= worldBounds.getBottom()) {
-            Explosion exp = explosionPool.obtain();
-            exp.set(height, pos);
             destroy();
         }
     }
@@ -66,4 +64,7 @@ public class EnemyShip extends Ship {
         speed.set(baseSpeed);
     }
 
+    public boolean isBulletCollision(Rect bullet) {
+        return !(bullet.getRight() < getLeft() || bullet.getLeft() > getRight() || bullet.getBottom() > getTop() || bullet.getTop() < pos.y);
+    }
 }

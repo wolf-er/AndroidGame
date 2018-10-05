@@ -17,21 +17,21 @@ import ru.gatsko.edu.game.sprite.EnemyShip;
 public class EnemiesEmitter {
 
     private static float ENEMY_SMALL_HEIGHT = 0.1f;
-    private static float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
+    private static float ENEMY_SMALL_BULLET_HEIGHT = 0.02f;
     private static float ENEMY_SMALL_BULLET_VY = -0.3f;
     private static int ENEMY_SMALL_BULLET_DAMAGE = 1;
     private static float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
     private static int ENEMY_SMALL_HP = 1;
 
     private static float ENEMY_MEDIUM_HEIGHT = 0.1f;
-    private static float ENEMY_MEDIUM_BULLET_HEIGHT = 0.02f;
+    private static float ENEMY_MEDIUM_BULLET_HEIGHT = 0.03f;
     private static float ENEMY_MEDIUM_BULLET_VY = -0.25f;
     private static int ENEMY_MEDIUM_BULLET_DAMAGE = 5;
     private static float ENEMY_MEDIUM_RELOAD_INTERVAL = 4f;
     private static int ENEMY_MEDIUM_HP = 5;
 
     private static float ENEMY_BIG_HEIGHT = 0.2f;
-    private static float ENEMY_BIG_BULLET_HEIGHT = 0.04f;
+    private static float ENEMY_BIG_BULLET_HEIGHT = 0.05f;
     private static float ENEMY_BIG_BULLET_VY = -0.3f;
     private static int ENEMY_BIG_BULLET_DAMAGE = 10;
     private static float ENEMY_BIG_RELOAD_INTERVAL = 3f;

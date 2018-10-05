@@ -13,6 +13,7 @@ import ru.gatsko.edu.game.math.Rect;
 import ru.gatsko.edu.game.pool.BulletPool;
 import ru.gatsko.edu.game.pool.ExplosionPool;
 import ru.gatsko.edu.game.sprite.Bullet;
+import ru.gatsko.edu.game.sprite.Explosion;
 
 /**
  * Created by gatsko on 30.09.2018.
@@ -31,14 +32,18 @@ public class Ship extends Sprite {
 
     protected float reloadInterval;
     protected float reloadTimer;
+
+    protected float damageInterval = 0.1f;
+    protected float damageTimer;
     protected int hp;
 
 
-    public Ship(TextureRegion region, int rows, int cols, int frames, BulletPool bulletPool, Sound shootSound) {
+    public Ship(TextureRegion region, int rows, int cols, int frames, BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound) {
         super(region, rows, cols, frames);
         this.bulletPool = bulletPool;
         this.shootSound = shootSound;
-        this.bulletDamage = 1;
+        this.explosionPool = explosionPool;
+        this.bulletDamage = 50;
         this.bulletHeight = 0.01f;
     }
 
@@ -54,8 +59,34 @@ public class Ship extends Sprite {
     }
 
     public void shoot(){
-        shootSound.play(0.5f);
+        shootSound.play(0.3f);
         Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletSpeed, 0.03f, worldBounds, bulletDamage);
+        bullet.set(this, bulletRegion, pos, bulletSpeed, 0.02f, worldBounds, bulletDamage);
+    }
+
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        damageTimer += delta;
+        if (damageTimer >= damageInterval) frame = 0;
+    }
+
+    public void boom(){
+        Explosion exp = explosionPool.obtain();
+        exp.set(getHeight(), pos);
+    }
+
+    public void damage(int damage){
+        frame = 1;
+        damageTimer = 0;
+        hp -= damage;
+        if (hp <= 0) {
+            destroy();
+            boom();
+        }
+    }
+
+    public int getHP(){
+        return hp;
     }
 }

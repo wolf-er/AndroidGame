@@ -1,11 +1,9 @@
 package ru.gatsko.edu.game.sprite;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.HashMap;
@@ -13,6 +11,7 @@ import java.util.HashMap;
 import ru.gatsko.edu.game.base.Ship;
 import ru.gatsko.edu.game.math.Rect;
 import ru.gatsko.edu.game.pool.BulletPool;
+import ru.gatsko.edu.game.pool.ExplosionPool;
 
 /**
  * Created by gatsko on 23.09.2018.
@@ -23,20 +22,29 @@ public class MainShip extends Ship {
     private int touchRight;
     private HashMap<Integer, Vector2> currTouch = new HashMap<Integer, Vector2>();
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool, Sound shootSound) {
-        super(atlas.findRegion("main_ship"), 1,2, 2, bulletPool, shootSound);
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound) {
+        super(atlas.findRegion("main_ship"), 1,2, 2, bulletPool, explosionPool, shootSound);
         this.bulletRegion = atlas.findRegion("bulletMainShip");
+
+    }
+
+    public void startNewGame(Rect worldBounds) {
         this.bulletHeight = 0.02f;
         this.bulletDamage = 1;
         this.bulletSpeed.set(0,0.5f);
-        this.reloadInterval = 10.2f;
-        setHeightProportion(0.2f);
+        this.reloadInterval = 0.5f;
+        this.hp = 10;
+        setHeightProportion(0.1f);
+        setBottom(worldBounds.getBottom() + (worldBounds.getTop() - worldBounds.getBottom()) * 0.02f);
+        setRight(worldBounds.getLeft() + (worldBounds.getRight() - worldBounds.getLeft()) / 2 + this.getHalfWidth());
+        flushDestroy();
     }
 
     @Override
     public void update(float delta) {
+            super.update(delta);
             reloadTimer += delta;
-            if (reloadTimer >= reloadInterval) {
+            if (reloadTimer >= reloadInterval && !isDestroyed) {
                 reloadTimer = 0f;
                 shoot();
             }
@@ -167,6 +175,10 @@ public class MainShip extends Ship {
         currTouch.get(pointer).x = touch.x;
         System.out.println("After " + currTouch.get(pointer).x);
         currTouch.get(pointer).y = touch.y;
+    }
+
+    public boolean isBulletCollision(Rect bullet) {
+        return !(bullet.getRight() < getLeft() || bullet.getLeft() > getRight() || bullet.getTop() < getBottom() || bullet.getBottom() > pos.y + getHalfHeight() / 2);
     }
 
 }

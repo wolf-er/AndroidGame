@@ -49,9 +49,7 @@ public class Bullet extends Sprite {
     @Override
     public void update(float delta) {
         this.pos.mulAdd(bulletSpeed, delta);
-        //System.out.println("Bullet position " + this.pos);
         if (isOutside(worldBounds)) {
-            System.out.println("OUT OF BOUNDS!");
             destroy();
         }
 

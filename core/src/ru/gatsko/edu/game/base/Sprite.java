@@ -3,7 +3,6 @@ package ru.gatsko.edu.game.base;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ru.gatsko.edu.game.math.Rect;
 import ru.gatsko.edu.game.utils.Regions;
@@ -73,7 +72,7 @@ public class Sprite extends Rect {
         this.scale = scale;
     }
     public void draw(SpriteBatch batch){
-        batch.draw(regions[frame], getLeft(), getBottom(), halfWidth, halfHeight, getWidth(), getHeight(), scale, scale, angle);
+        if (!isDestroyed) batch.draw(regions[frame], getLeft(), getBottom(), halfWidth, halfHeight, getWidth(), getHeight(), scale, scale, angle);
     }
 
     public void destroy() {
