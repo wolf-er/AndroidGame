@@ -20,6 +20,8 @@ import ru.gatsko.edu.game.sprite.Explosion;
  */
 
 public class Ship extends Sprite {
+    public enum ShootState {SINGLE, DOUBLE, TRIPLE};
+    public ShootState shootState = ShootState.SINGLE;
     protected Vector2 speed = new Vector2();
     protected Vector2 bulletSpeed = new Vector2();
     protected Rect worldBounds;
@@ -29,10 +31,9 @@ public class Ship extends Sprite {
     protected float bulletHeight;
     protected Sound shootSound;
     protected int bulletDamage;
-
     protected float reloadInterval;
     protected float reloadTimer;
-
+    protected int leftFlag = 1;
     protected float damageInterval = 0.1f;
     protected float damageTimer;
     protected int hp;
@@ -61,7 +62,17 @@ public class Ship extends Sprite {
     public void shoot(){
         shootSound.play(0.3f);
         Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletSpeed, 0.02f, worldBounds, bulletDamage);
+        bullet.set(this, bulletRegion, pos, bulletSpeed, bulletHeight, worldBounds, bulletDamage);
+        if (shootState == ShootState.DOUBLE) {
+            Bullet bullet2 = bulletPool.obtain();
+            bullet2.set(this, bulletRegion, pos, bulletSpeed.cpy().add(new Vector2(0.05f * leftFlag,0f)), bulletHeight, worldBounds, bulletDamage);
+            leftFlag *= -1;
+        } else if (shootState == ShootState.TRIPLE) {
+            Bullet bullet2 = bulletPool.obtain();
+            bullet2.set(this, bulletRegion, pos, bulletSpeed.cpy().add(new Vector2(0.05f, 0f)), bulletHeight, worldBounds, bulletDamage);
+            Bullet bullet3 = bulletPool.obtain();
+            bullet3.set(this, bulletRegion, pos, bulletSpeed.cpy().add(new Vector2(-0.05f, 0f)), bulletHeight, worldBounds, bulletDamage);
+        }
     }
 
     @Override
@@ -88,5 +99,13 @@ public class Ship extends Sprite {
 
     public int getHP(){
         return hp;
+    }
+
+    public float getReloadInterval() {
+        return reloadInterval;
+    }
+
+    public void setReloadInterval(float reloadInterval) {
+        this.reloadInterval = reloadInterval;
     }
 }

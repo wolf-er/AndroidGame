@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 
 import ru.gatsko.edu.game.base.ActionListener;
+import ru.gatsko.edu.game.base.Font;
 import ru.gatsko.edu.game.math.Rect;
 import ru.gatsko.edu.game.sprite.Background;
 import ru.gatsko.edu.game.base.Base2DScreen;
@@ -27,6 +29,8 @@ public class MenuScreen extends Base2DScreen implements ActionListener{
     ButtonExit buttonExit;
     ButtonPlay buttonPlay;
     TextureAtlas atlas;
+    StringBuilder sbAuthor = new StringBuilder();
+    Font font;
     Texture bg;
     Star stars[];
 
@@ -48,6 +52,9 @@ public class MenuScreen extends Base2DScreen implements ActionListener{
         for (int i = 0; i < STARS_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
+        font = new Font("font.fnt","font.png");
+        font.setFontSize(0.03f);
+
     }
 
     @Override
@@ -73,7 +80,8 @@ public class MenuScreen extends Base2DScreen implements ActionListener{
         for (int i = 0; i < STARS_COUNT; i++) { stars[i].draw(batch); }
         buttonExit.draw(batch);
         buttonPlay.draw(batch);
-
+        sbAuthor.setLength(0);
+        font.draw(batch, sbAuthor.append("VITALY GATSKO PRODUCTION"), worldBounds.getLeft() + 0.01f, worldBounds.getTop() - 0.01f, Align.left);
         batch.end();
     }
 

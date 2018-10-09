@@ -32,12 +32,18 @@ public class MainShip extends Ship {
         this.bulletHeight = 0.02f;
         this.bulletDamage = 1;
         this.bulletSpeed.set(0,0.5f);
-        this.reloadInterval = 0.5f;
-        this.hp = 10;
-        setHeightProportion(0.1f);
-        setBottom(worldBounds.getBottom() + (worldBounds.getTop() - worldBounds.getBottom()) * 0.02f);
+        this.reloadInterval = 0.27f;
+        this.hp = 30;
+        setHeightProportion(0.15f);
+        setBottom(worldBounds.getBottom() + (worldBounds.getTop() - worldBounds.getBottom()) * 0.05f);
         setRight(worldBounds.getLeft() + (worldBounds.getRight() - worldBounds.getLeft()) / 2 + this.getHalfWidth());
         flushDestroy();
+    }
+
+    public void upgradeLevel(float additionalBulletSpeed, float reloadIntervalDelta, float addHP){
+        this.bulletSpeed.y += additionalBulletSpeed;
+        this.reloadInterval -= reloadIntervalDelta;
+        this.hp += addHP;
     }
 
     @Override
@@ -80,7 +86,7 @@ public class MainShip extends Ship {
     @Override
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
-        setBottom(worldBounds.getBottom() + (worldBounds.getTop() - worldBounds.getBottom()) * 0.02f);
+        setBottom(worldBounds.getBottom() + (worldBounds.getTop() - worldBounds.getBottom()) * 0.05f);
         setRight(worldBounds.getLeft() + (worldBounds.getRight() - worldBounds.getLeft()) / 2 + this.getHalfWidth());
     }
 

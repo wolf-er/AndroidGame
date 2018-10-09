@@ -1,6 +1,8 @@
 package ru.gatsko.edu.game.sprite;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import ru.gatsko.edu.game.base.ActionListener;
 import ru.gatsko.edu.game.base.ScaledTouchUpButton;
@@ -13,8 +15,9 @@ import ru.gatsko.edu.game.math.Rect;
 
 public class ButtonNewGame extends ScaledTouchUpButton {
     public ButtonNewGame(TextureAtlas atlas, ActionListener actionListener) {
-        super(atlas.findRegion("button_new_game"), actionListener,0.9f);
-        setHeightProportion(0.05f);
+        super(new TextureRegion(new Texture("newgame.png")), actionListener,0.9f);
+        //super(atlas.findRegion("button_new_game"), actionListener,0.9f);
+        setHeightProportion(0.15f);
     }
 
     @Override

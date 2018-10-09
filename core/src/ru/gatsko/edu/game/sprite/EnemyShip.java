@@ -18,6 +18,7 @@ public class EnemyShip extends Ship {
     private final Vector2 incommingSpeed = new Vector2(0,-0.3f);
     private Vector2 baseSpeed = new Vector2();
     private float height;
+    private int points;
 
     public EnemyShip(BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound, MainShip mainShip) {
         super(bulletPool, explosionPool, shootSound);
@@ -48,7 +49,7 @@ public class EnemyShip extends Ship {
                     TextureRegion bulletRegion,
                     float bulletHeight,
                     float bulletVY,
-                    int bulletDamage, float reloadInterval, float height, int hp, Rect worldBounds) {
+                    int bulletDamage, float reloadInterval, float height, int points, int hp, Rect worldBounds) {
         this.regions = regions;
         this.baseSpeed.set(baseSpeed);
         this.bulletRegion = bulletRegion;
@@ -56,6 +57,7 @@ public class EnemyShip extends Ship {
         this.bulletSpeed.set(0, bulletVY);
         this.bulletDamage = bulletDamage;
         this.reloadInterval = reloadInterval;
+        this.points = points;
         this.hp = hp;
         this.worldBounds = worldBounds;
         this.height = height;
@@ -66,5 +68,9 @@ public class EnemyShip extends Ship {
 
     public boolean isBulletCollision(Rect bullet) {
         return !(bullet.getRight() < getLeft() || bullet.getLeft() > getRight() || bullet.getBottom() > getTop() || bullet.getTop() < pos.y);
+    }
+
+    public int getPoints() {
+        return points;
     }
 }
