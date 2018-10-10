@@ -29,12 +29,12 @@ public class MainShip extends Ship {
     }
 
     public void startNewGame(Rect worldBounds) {
-        this.bulletHeight = 0.02f;
+        this.bulletHeight = 0.015f;
         this.bulletDamage = 1;
         this.bulletSpeed.set(0,0.5f);
         this.reloadInterval = 0.27f;
         this.hp = 30;
-        setHeightProportion(0.15f);
+        setHeightProportion(0.1f);
         setBottom(worldBounds.getBottom() + (worldBounds.getTop() - worldBounds.getBottom()) * 0.05f);
         setRight(worldBounds.getLeft() + (worldBounds.getRight() - worldBounds.getLeft()) / 2 + this.getHalfWidth());
         flushDestroy();
@@ -56,26 +56,26 @@ public class MainShip extends Ship {
             }
             speed.setZero();
             if (leftPressed) {
-                speed.x -= 1;
+                speed.x -= 0.8f;
             }
             if (rightPressed) {
-                speed.x += 1;
+                speed.x += 0.8f;
             }
             if (downPressed) {
-                speed.y -= 1;
+                speed.y -= 0.8f;
             }
             if (upPressed) {
-                speed.y += 1;
+                speed.y += 0.8f;
             }
             if (currTouch.size() > 0) {
                 for (Vector2 values : currTouch.values()) {
-                    if (values.x < worldBounds.pos.x) {
+                    if (values.x < pos.x || values.x < worldBounds.getHeight() * 0.1f) {
                         touchRight--;
-                    } else if (values.x > worldBounds.pos.x) {
+                    } else if (values.x > pos.x || values.x > worldBounds.getHeight() * 0.9f) {
                         touchRight++;
                     }
                 }
-                speed.x += Integer.signum(touchRight);
+                speed.x += Integer.signum(touchRight) * 0.7f;
             }
             touchRight = 0;
 

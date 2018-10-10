@@ -97,7 +97,7 @@ public class GameScreen extends Base2DScreen implements ActionListener {
         //music.play();
         music.setPosition(34f);
         font = new Font("font.fnt","font.png");
-        font.setFontSize(0.03f);
+        font.setFontSize(0.014f);
         startNewGame();
     }
 

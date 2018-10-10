@@ -14,7 +14,7 @@ import ru.gatsko.edu.game.math.Rect;
 public class ButtonPlay extends ScaledTouchUpButton {
     public ButtonPlay(TextureAtlas atlas, ActionListener actionListener) {
         super(atlas.findRegion("btPlay"), actionListener,0.9f);
-        setHeightProportion(0.5f);
+        setHeightProportion(0.25f);
     }
 
     @Override

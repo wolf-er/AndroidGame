@@ -53,7 +53,7 @@ public class MenuScreen extends Base2DScreen implements ActionListener{
             stars[i] = new Star(atlas);
         }
         font = new Font("font.fnt","font.png");
-        font.setFontSize(0.03f);
+        font.setFontSize(0.015f);
 
     }
 
